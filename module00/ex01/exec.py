@@ -2,7 +2,7 @@ import sys
 
 
 def usage():
-    print("exec.py takes a string as argument, reverses it, swaps its letters case and print the result.")
+    print("exec.py takes a string as argument")
     print("python3 exec.py 'Hello World!'")
 
 
@@ -16,7 +16,8 @@ def merge_strings(strings: list):
 
 def swap_letters_case(string: str):
     """
-    Takes a string and returns a new string with the case of each letter swapped
+    Takes a string and returns a new string with the case of each
+    letter swapped.
     """
     return string.swapcase()
 

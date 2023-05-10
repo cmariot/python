@@ -2,7 +2,8 @@ import sys
 
 
 def usage():
-    print("whois.py takes an integer as argument and prints whether it's a odd, even or zero.")
+    print("whois.py takes an integer as argument")
+    print("and prints whether it's a odd, even or zero.")
     print("example : python3 whois.py 42")
 
 

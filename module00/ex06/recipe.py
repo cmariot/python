@@ -64,12 +64,20 @@ def add_recipe():
     if (recipe_name in cookbook):
         print(f"ERROR, {recipe_name} is already in the cookbook")
     else:
-        ingredients: list = input(
-            "Please enter the recipe's ingredients separated by a comma:\n").split(",")
+        ingredients: list = []
+        print("Please enter the ingredients : (Enter an empty line to finish)")
+        while (True):
+            ingredient: str = input()
+            if (ingredient == ""):
+                break
+            ingredients.append(ingredient)
         meal: str = input(
             "Please enter the recipe's meal type:\n")
         prep_time: int = int(input(
             "Please enter the recipe's preparation time in minutes:\n"))
+        if (prep_time < 0):
+            print("ERROR, the preparation time must be positive")
+            return
         cookbook[recipe_name] = {
             "ingredients": ingredients,
             "meal": meal,
@@ -93,6 +101,7 @@ if __name__ == "__main__":
         print_options()
         try:
             action: int = int(input("Please select an action:\n"))
+            print()
             if (action == 1):
                 print_recipe_names()
             elif (action == 2):
@@ -107,5 +116,12 @@ if __name__ == "__main__":
             else:
                 print("ERROR, invalid action")
         except ValueError:
-            print("ERROR, invalid action")
+            print("\nERROR, invalid action\n")
             continue
+        except EOFError:
+            print("\nERROR, invalid action\n")
+            continue
+        except KeyboardInterrupt:
+            print("\nERROR, invalid action\n")
+            continue
+        print()

@@ -6,7 +6,8 @@ def text_analyzer(string: str = None):
     Analyzes a text string and prints information about its composition.
 
     Parameters:
-    string (str): The text to be analyzed. If None, the function prompts the user to input a text.
+    string (str): The text to be analyzed. If None, the function prompts the
+    user to input a text.
 
     Returns:
     None: The function only prints the analysis results.
@@ -14,10 +15,11 @@ def text_analyzer(string: str = None):
     Raises:
     TypeError: If the input text is not a string.
 
-    The function counts the number of upper and lower case letters, punctuation marks, and spaces in the input text.
-    It then prints a summary of the results, including the total number of characters, the number of upper and lower
-    case letters, the number of punctuation marks, and the number of spaces. The punctuation marks considered are
-    periods, commas, colons, semicolons, exclamation marks, question marks, hyphens, apostrophes, and parentheses.
+    The function counts the number of upper and lower case letters,
+    punctuation marks, and spaces in the input text.
+    It then prints a summary of the results, including the total number of
+    characters, the number of upper and lower case letters, the number of
+    punctuation marks, and the number of spaces.
 
     Example usage:
     >>> text_analyzer("Hello, World!")
@@ -36,7 +38,7 @@ def text_analyzer(string: str = None):
     - 3 space(s)
     """
 
-    if (string == None):
+    if string is None:
         print("What is the text to analyse ?")
         text_analyzer(input())
     elif (type(string) != str):

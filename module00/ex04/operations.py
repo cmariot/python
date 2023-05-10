@@ -1,4 +1,3 @@
-
 import sys
 
 
@@ -34,6 +33,7 @@ if (__name__ == "__main__"):
     if (nb_args == 0):
         print("Usage: python operations.py <number1> <number2>")
     elif (nb_args != 2 or invalid_args_type(sys.argv[1], sys.argv[2])):
-        print("InputError: only numbers\n\nUsage: python operations.py <number1> <number2>")
+        print("InputError: operations.py takes only 2 integers as arguments")
+        print("Usage: python operations.py <number1> <number2>")
     else:
         operations(sys.argv[1], sys.argv[2])
