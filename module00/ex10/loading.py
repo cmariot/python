@@ -1,37 +1,58 @@
 import time
 
 
-def ft_progress(listy):
-    for i in listy:
-        yield i
+def ft_progress(iterable: 'list',
+                length=50,
+                fill='█',
+                print_end='\r'):
+    """
+    Progress bar generator
+    This function displays a progress bar for an iterable object
+    and yields its items.
+
+    Parameters:
+    - iterable (list): An iterable object.
+    - length (int, optional): The length of the progress bar. Default is 50.
+    - fill (str, optional): The character used to fill the progress bar.
+    - print_end (str, optional): The character used to separate printed output.
+
+    Returns:
+    - generator: A generator that yields the items of the iterable object.
+
+    Example usage:
+    ```
+        for i in ft_progress(range(100)):
+            time.sleep(0.1)
+    ```
+    """
+
+    start = time.time()
+    total = len(iterable)
+    filled_length = 0
+
+    fmt_percent = '{0:3.0f}%'
+    fmt_eta = '{0:5.2f}s'
+    fmt_et = '{0:.2f}s'
+
+    for i, item in enumerate(iterable):
+        yield item
+        percent = (i + 1) / total * 100
+        filled_length = int(length * (i + 1) // total)
+        elapsed_time = time.time() - start
+        eta = elapsed_time * (total / (i + 1) - 1)
+        bar = "[ETA:" + fmt_eta.format(eta) + "]"\
+            + " [" + fmt_percent.format(percent) + ']'\
+            + '[' + fill * filled_length\
+            + '-' * (length - filled_length) + '] '\
+            + str(i + 1) + "/" + str(total) \
+            + " | elapsed time " + fmt_et.format(elapsed_time)
+        print(bar, end=print_end)
 
 
 if __name__ == "__main__":
-    time_elapsed = 0
-    sleep_time = 0.01
-    range_size = 300
-    remaining_range = range_size
-    loading_bar_size = 80
-
-    listy = range(range_size)
+    listy = range(500)
+    ret = 0
     for elem in ft_progress(listy):
-        time_elapsed += sleep_time
-        remaining_range -= 1
-        ETA = float(remaining_range * sleep_time)
-        percent = (elem + 1) * 100 / range_size
-
-        number_of_blocks = int(percent * loading_bar_size / 100)
-        number_of_spaces = loading_bar_size - number_of_blocks
-        sequence1 = "{:■<" + str(number_of_blocks) + "}"
-        sequence2 = "{: <" + str(number_of_spaces) + "}"
-        progress_bar = sequence1.format("") + sequence2.format("")
-
-        print("ETA: %.2fs" % ETA, end=' ')
-        print("[%3d%%]" % percent, end=' ')
-        print("%4d/%4d |" % (elem + 1, range_size), end=' ')
-        print("[ %s ]" % progress_bar, end=' ')
-        print("elapsed_time %.2fs" % time_elapsed, end='\r')
-
-        time.sleep(sleep_time)
-
-    print("")
+        ret += elem
+        time.sleep(0.005)
+    print()
