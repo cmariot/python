@@ -1,19 +1,20 @@
 import sys
+import string
 
 
-def text_analyzer(string: str = None):
+def text_analyzer(to_analyze: str = None):
     """
-    Analyzes a text string and prints information about its composition.
+    Analyzes a text to_analyze and prints information about its composition.
 
     Parameters:
-    string (str): The text to be analyzed. If None, the function prompts the
-    user to input a text.
+    to_analyze (str): The text to be analyzed. If None, the function prompts
+    the user to input a text.
 
     Returns:
     None: The function only prints the analysis results.
 
     Raises:
-    TypeError: If the input text is not a string.
+    TypeError: If the input text is not a to_analyze.
 
     The function counts the number of upper and lower case letters,
     punctuation marks, and spaces in the input text.
@@ -38,34 +39,28 @@ def text_analyzer(string: str = None):
     - 3 space(s)
     """
 
-    if string is None:
+    if to_analyze is None:
         print("What is the text to analyse ?")
         text_analyzer(input())
-    elif (type(string) != str):
-        print("The text must be a string")
+    elif (type(to_analyze) != str):
+        print("The text must be a to_analyze")
     else:
         upper_case = 0
         lower_case = 0
         punctuation = 0
         spaces = 0
-        punctuation_chars = [".", ",", ":", ";", "!", "?",
-                             "-", "'", '"', "(", ")", "[",
-                             "]", "{", "}", "<", ">", "/",
-                             "\\", "|", "@", "#", "$", "%",
-                             "^", "&", "*", "_", "+", "=",
-                             "~", "`", "°"]
 
-        for char in string:
+        for char in to_analyze:
             if char.isupper():
                 upper_case += 1
             elif char.islower():
                 lower_case += 1
             elif char.isspace():
                 spaces += 1
-            elif char in punctuation_chars:
+            elif char in string.punctuation:
                 punctuation += 1
 
-        print(f"The text contains {len(string)} character(s):")
+        print(f"The text contains {len(to_analyze)} character(s):")
         print(f"- {upper_case} upper letter(s)")
         print(f"- {lower_case} lower letter(s)")
         print(f"- {punctuation} punctuation mark(s)")

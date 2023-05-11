@@ -1,7 +1,7 @@
 import time
 
 
-def ft_progress(iterable: 'list',
+def ft_progress(iterable,
                 length=50,
                 fill='█',
                 print_end='\r'):
@@ -27,14 +27,15 @@ def ft_progress(iterable: 'list',
     """
 
     start = time.time()
-    total = len(iterable)
+    total = 0
+    for _ in iterable:
+        total += 1
     filled_length = 0
-
     fmt_percent = '{0:3.0f}%'
     fmt_eta = '{0:5.2f}s'
     fmt_et = '{0:.2f}s'
-
-    for i, item in enumerate(iterable):
+    i = 0
+    while (i < total):
         percent = (i + 1) / total * 100
         filled_length = int(length * (i + 1) // total)
         elapsed_time = time.time() - start
@@ -46,11 +47,12 @@ def ft_progress(iterable: 'list',
             + str(i + 1) + "/" + str(total) \
             + " | elapsed time " + fmt_et.format(elapsed_time)
         print(bar, end=print_end)
-        yield item
+        i += 1
+        yield i
 
 
 if __name__ == "__main__":
-    listy = range(1500)
+    listy = (range(1000))
     ret = 0
     for elem in ft_progress(listy):
         ret += elem

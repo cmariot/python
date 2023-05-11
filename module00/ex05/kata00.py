@@ -1,5 +1,5 @@
 # A tuple of integers
-kata = (19, 42, 21)
+kata = (8, 42, 100)
 
 
 def check_if_int(t: tuple):

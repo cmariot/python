@@ -1,5 +1,5 @@
 # Commande pour afficher la liste des paquets installés, ainsi que leurs versions :
--> pip freeze
+-> pip list
 
 # Commande pour afficher les métadonnées d'un paquet :
 -> pip show numpy
@@ -10,5 +10,6 @@
 # Installer ou Ré-installer un package : 
 -> pip install numpy
 
-# Freeze les packages installés dans un fichier requirements.txt :
+# Freeze les packages installés dans un fichier requirements.txt
+# (utile pour installation de paquets en dependance) :
 -> pip freeze > requirements.txt
