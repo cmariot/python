@@ -4,6 +4,7 @@ import time
 def ft_progress(iterable,
                 length=50,
                 fill='█',
+                empty='░',
                 print_end='\r'):
     """
     Progress bar generator
@@ -41,9 +42,9 @@ def ft_progress(iterable,
         elapsed_time = time.time() - start
         eta = elapsed_time * (total / (i + 1) - 1)
         bar = "[ETA:" + fmt_eta.format(eta) + "]"\
-            + " [" + fmt_percent.format(percent) + ']'\
-            + '|' + fill * filled_length\
-            + '░' * (length - filled_length) + '| '\
+            + " [" + fmt_percent.format(percent) + '] '\
+            + fill * filled_length\
+            + empty * (length - filled_length) + ' '\
             + str(i + 1) + "/" + str(total) \
             + " | elapsed time " + fmt_et.format(elapsed_time)
         print(bar, end=print_end)
