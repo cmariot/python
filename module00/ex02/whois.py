@@ -19,7 +19,7 @@ def str_to_integer(string: str):
         return int(string)
     except ValueError:
         print("whois.py takes only an integer as argument")
-        sys.exit(1)
+        exit(1)
 
 
 if __name__ == "__main__":

@@ -44,6 +44,7 @@ Good luck!\n"""
                 return
             try_number += 1
         except EOFError:
+            print()
             continue
         except KeyboardInterrupt:
             print()

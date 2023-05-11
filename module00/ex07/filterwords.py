@@ -9,7 +9,8 @@ def error():
 
 def str_to_integer(string: str):
     """
-    Takes a string and returns an integer if it's a valid integer
+    Takes a string and returns an integer
+    if it's not a valid integer, print an error and exit
     """
     try:
         return int(string)

@@ -35,22 +35,22 @@ def ft_progress(iterable: 'list',
     fmt_et = '{0:.2f}s'
 
     for i, item in enumerate(iterable):
-        yield item
         percent = (i + 1) / total * 100
         filled_length = int(length * (i + 1) // total)
         elapsed_time = time.time() - start
         eta = elapsed_time * (total / (i + 1) - 1)
         bar = "[ETA:" + fmt_eta.format(eta) + "]"\
             + " [" + fmt_percent.format(percent) + ']'\
-            + '[' + fill * filled_length\
-            + '-' * (length - filled_length) + '] '\
+            + '|' + fill * filled_length\
+            + '░' * (length - filled_length) + '| '\
             + str(i + 1) + "/" + str(total) \
             + " | elapsed time " + fmt_et.format(elapsed_time)
         print(bar, end=print_end)
+        yield item
 
 
 if __name__ == "__main__":
-    listy = range(500)
+    listy = range(1500)
     ret = 0
     for elem in ft_progress(listy):
         ret += elem

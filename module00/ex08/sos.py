@@ -46,7 +46,7 @@ def encrypt(message: str) -> str:
         if letter.isspace():
             morse += "/ "
         elif letter.isalnum():
-            morse += MORSE_CODE_DICT[letter] + ' '
+            morse += (MORSE_CODE_DICT[letter] + ' ')
         else:
             print("ERROR")
             exit(1)
