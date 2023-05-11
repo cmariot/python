@@ -1,13 +1,11 @@
 import sys
 
 
-def invalid_args_type(arg1: int, arg2: int) -> bool:
+def str_to_integer(string: str):
     """
-    Check if the arguments are not numbers
+    Takes a string and returns an integer if it's a valid integer
     """
-    if (arg1.isnumeric() and arg2.isnumeric()):
-        return False
-    return True
+    return int(string)
 
 
 def operations(a: str, b: str) -> None:
@@ -30,10 +28,15 @@ def operations(a: str, b: str) -> None:
 
 if (__name__ == "__main__"):
     nb_args: int = len(sys.argv) - 1
-    if (nb_args == 0):
+    if (nb_args != 2):
         print("Usage: python operations.py <number1> <number2>")
-    elif (nb_args != 2 or invalid_args_type(sys.argv[1], sys.argv[2])):
+        exit(1)
+
+    try:
+        nb1: int = int(sys.argv[1])
+        nb2: int = int(sys.argv[2])
+    except ValueError:
         print("InputError: operations.py takes only 2 integers as arguments")
         print("Usage: python operations.py <number1> <number2>")
     else:
-        operations(sys.argv[1], sys.argv[2])
+        operations(nb1, nb2)
