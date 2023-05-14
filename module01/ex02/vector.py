@@ -18,11 +18,11 @@ class Vector:
             if not values:
                 return (0, 1)
 
-            # Check if values is a list of a list of floats
+            # Check if values is a list of floats
             elif (len(values) == 1
                   and isinstance(values[0], list)
                   and all(isinstance(value, float) for value in values[0])):
-                return (1, len(values))
+                return (1, len(values[0]))
 
             # Check if values is a list of lists of single float
             elif (all(isinstance(value, list) for value in values)
@@ -60,14 +60,10 @@ class Vector:
 
     def T(self) -> 'Vector':
         """Transpose the vector"""
-        if self.shape[0] == 1:
-            return Vector([self.values[0][i]
-                           for i in range(self.shape[1])])
-        else:
-            return Vector([[self.values[j][i]
-                            for j in range(self.shape[0])
-                            for i in range(self.shape[1])
-                            ]])
+        return Vector([[self.values[j][i]
+                        for j in range(self.shape[0])
+                        for i in range(self.shape[1])
+                        ]])
 
     # must be identical, i.e we expect that print(vector) and vector within
     # python interpretor behave the same
@@ -118,8 +114,10 @@ class Vector:
     # __truediv__
     def __truediv__(self, other: float) -> 'Vector':
         """Divide a vector by a scalar"""
-        if not isinstance(other, float):
+        if not isinstance(other, (float, int)):
             raise TypeError("Can only divide a vector by a scalar")
+        elif float(other) == 0.0:
+            raise ZeroDivisionError("ZeroDivisionError: division by zero.")
         return Vector([[self.values[i][j] / other
                         for j in range(self.shape[1])]
                        for i in range(self.shape[0])])
@@ -138,11 +136,19 @@ class Vector:
     # __rmul__
     def __mul__(self, other: float) -> 'Vector':
         """Multiply a vector by a scalar"""
-        if not isinstance(other, float):
+        if not isinstance(other, (float, int)):
             raise TypeError("Can only multiply a vector by a scalar")
-        return Vector([[self.values[i][j] * other
-                        for j in range(self.shape[1])]
-                       for i in range(self.shape[0])])
+        ret = []
+        if self.shape == (1, 1):
+            return Vector([[self.values[0][0] * other]])
+        elif self.shape[0] == 1:
+            for i in range(self.shape[1]):
+                ret.append(self.values[0][i] * other)
+            return Vector([ret])
+        elif self.shape[1] == 1:
+            for i in range(self.shape[0]):
+                ret.append([self.values[i][0] * other])
+            return Vector(ret)
 
     def __rmul__(self, other: float) -> 'Vector':
         """Multiply a vector by a scalar"""
