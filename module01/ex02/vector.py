@@ -51,6 +51,16 @@ class Vector:
                         + "- a size: Vector(3) -> [[0.0], [1.0], [2.0]]\n"
                         + "- a range: Vector((3, 6)) -> [[3.0], [4.0], [5.0]]")
 
+    def __forEach__(self, function) -> 'Vector':
+        values = self.values
+        if self.shape[0] == 1:
+            for i in range(self.shape[1]):
+                values[0][i] = function(values[0][i])
+        else:
+            for i in range(self.shape[0]):
+                values[i][0] = function(values[i][0])
+        return Vector(values)
+
     def dot(self, other: 'Vector') -> float:
         """Dot product of two vectors"""
         if self.shape != other.shape:
@@ -84,11 +94,18 @@ class Vector:
 
     def __add__(self, other: 'Vector') -> 'Vector':
         """Add two vectors"""
-        if self.shape != other.shape:
+        if not isinstance(other, Vector):
+            raise TypeError("Can only add a vector from a vector")
+        elif self.shape != other.shape:
             raise ValueError("Cannot add vectors of different shapes")
-        return Vector([[self.values[i][j] + other.values[i][j]
-                        for j in range(self.shape[1])]
-                       for i in range(self.shape[0])])
+        values = self.values
+        if self.shape[0] == 1:
+            for i in range(self.shape[1]):
+                values[0][i] += other[0][i]
+        else:
+            for i in range(self.shape[0]):
+                values[i][0] += other[i][0]
+        return Vector(values)
 
     def __radd__(self, other: 'Vector') -> 'Vector':
         """Add two vectors"""
@@ -100,11 +117,18 @@ class Vector:
 
     def __sub__(self, other: 'Vector') -> 'Vector':
         """Subtract two vectors"""
-        if self.shape != other.shape:
+        if not isinstance(other, Vector):
+            raise TypeError("Can only subtract a vector from a vector")
+        elif self.shape != other.shape:
             raise ValueError("Cannot subtract vectors of different shapes")
-        return Vector([[self.values[i][j] - other.values[i][j]
-                        for j in range(self.shape[1])]
-                       for i in range(self.shape[0])])
+        values = self.values
+        if self.shape[0] == 1:
+            for i in range(self.shape[1]):
+                values[0][i] -= other[0][i]
+        else:
+            for i in range(self.shape[0]):
+                values[i][0] -= other[i][0]
+        return Vector(values)
 
     def __rsub__(self, other: 'Vector') -> 'Vector':
         """Subtract two vectors"""

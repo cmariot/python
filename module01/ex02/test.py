@@ -1,5 +1,10 @@
 from vector import Vector
 
+
+def plusOne(arg):
+    return arg + 1
+
+
 if __name__ == "__main__":
 
     # Column vector of shape n * 1
@@ -77,3 +82,11 @@ if __name__ == "__main__":
     print(v2.T().shape)
     # Expected output:
     # # (4,1)
+
+    print()
+    print("Test forEach :")
+    v1 = Vector([[0.0, ]])
+    v3 = v1.__forEach__(plusOne)
+    print(v3)
+
+    print("V3 + V3 = ", v3 + v3)
