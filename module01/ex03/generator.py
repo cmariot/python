@@ -2,12 +2,12 @@ import random
 
 
 def shuffle(array: 'list[str]') -> 'list[str]':
-    new_array: list[str] = []
+    shuffled_array: list[str] = []
     for i in range(len(array)):
         random_index: int = random.randint(0, len(array) - 1)
-        new_array.append(array[random_index])
+        shuffled_array.append(array[random_index])
         array.pop(random_index)
-    return new_array
+    return shuffled_array
 
 
 def generator(string: str, sep: str = " ", option: str = "none") -> str:
@@ -21,7 +21,6 @@ def generator(string: str, sep: str = " ", option: str = "none") -> str:
         or not isinstance(option, str)
             or option not in ["none", "shuffle", "unique", "ordered"]):
         return "ERROR"
-
     substrings: list[str] = string.split(sep)
     if option == "shuffle":
         substrings = shuffle(substrings)
