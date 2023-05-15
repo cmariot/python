@@ -1,3 +1,6 @@
+import copy
+
+
 class Vector:
 
     def __init__(self,
@@ -51,31 +54,31 @@ class Vector:
                         + "- a size: Vector(3) -> [[0.0], [1.0], [2.0]]\n"
                         + "- a range: Vector((3, 6)) -> [[3.0], [4.0], [5.0]]")
 
-    def __forEach__(self, function) -> 'Vector':
-        values = self.values
-        if self.shape[0] == 1:
-            for i in range(self.shape[1]):
-                values[0][i] = function(values[0][i])
-        else:
-            for i in range(self.shape[0]):
-                values[i][0] = function(values[i][0])
-        return Vector(values)
-
     def dot(self, other: 'Vector') -> float:
         """Dot product of two vectors"""
         if self.shape != other.shape:
             raise ValueError("Cannot dot vectors of different shapes")
-        return sum([self.values[i][0] * other.values[i][0]
-                    for i in range(self.shape[0])])
+        dot: float = 0.0
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                print(self.values[i][j], other.values[i][j])
+                dot += (self.values[i][j] * other.values[i][j])
+        return dot
 
     def T(self) -> 'Vector':
         """Transpose the vector"""
-        return Vector([[self.values[j][i]
-                        for j in range(self.shape[0])
-                        for i in range(self.shape[1])
-                        ]])
+        new_list = []
+        if (self.shape[0] == 1):
+            for i in range(self.shape[1]):
+                new_list.append([self.values[0][i]])
+            return Vector(new_list)
+        else:
+            new_list.append([])
+            for i in range(self.shape[0]):
+                new_list[0].append(self.values[i][0])
+            return Vector(new_list)
 
-    # must be identical, i.e we expect that print(vector) and vector within
+    # must be identical, i.e we expect that 57GÌ(vector) and vector within
     # python interpretor behave the same
     # __str__
     # __repr__
@@ -98,13 +101,10 @@ class Vector:
             raise TypeError("Can only add a vector from a vector")
         elif self.shape != other.shape:
             raise ValueError("Cannot add vectors of different shapes")
-        values = self.values
-        if self.shape[0] == 1:
-            for i in range(self.shape[1]):
-                values[0][i] += other[0][i]
-        else:
-            for i in range(self.shape[0]):
-                values[i][0] += other[i][0]
+        values = copy.deepcopy(self.values)
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                values[i][j] += other[i][j]
         return Vector(values)
 
     def __radd__(self, other: 'Vector') -> 'Vector':
@@ -114,20 +114,16 @@ class Vector:
     # sub & rsub: only vectors of same shape.
     # __sub__
     # __rsub__
-
     def __sub__(self, other: 'Vector') -> 'Vector':
         """Subtract two vectors"""
         if not isinstance(other, Vector):
             raise TypeError("Can only subtract a vector from a vector")
         elif self.shape != other.shape:
             raise ValueError("Cannot subtract vectors of different shapes")
-        values = self.values
-        if self.shape[0] == 1:
-            for i in range(self.shape[1]):
-                values[0][i] -= other[0][i]
-        else:
-            for i in range(self.shape[0]):
-                values[i][0] -= other[i][0]
+        values = copy.deepcopy(self.values)
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                values[i][j] -= other[i][j]
         return Vector(values)
 
     def __rsub__(self, other: 'Vector') -> 'Vector':
@@ -142,14 +138,16 @@ class Vector:
             raise TypeError("Can only divide a vector by a scalar")
         elif float(other) == 0.0:
             raise ZeroDivisionError("ZeroDivisionError: division by zero.")
-        return Vector([[self.values[i][j] / other
-                        for j in range(self.shape[1])]
-                       for i in range(self.shape[0])])
+        values = copy.deepcopy(self.values)
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                values[i][j] /= other
+        return Vector(values)
 
     # rtruediv : raises an NotImplementedError with the message
     # "Division of a scalar by a Vector is not defined here."
     # __rtruediv__
-    def __rtruediv__(self, other: float) -> 'Vector':
+    def __rtruediv__(self, other: 'Vector') -> 'Vector':
         """Divide a vector by a scalar"""
         raise NotImplementedError(
             "Division of a scalar by a Vector is not defined here.")
@@ -162,17 +160,11 @@ class Vector:
         """Multiply a vector by a scalar"""
         if not isinstance(other, (float, int)):
             raise TypeError("Can only multiply a vector by a scalar")
-        ret = []
-        if self.shape == (1, 1):
-            return Vector([[self.values[0][0] * other]])
-        elif self.shape[0] == 1:
-            for i in range(self.shape[1]):
-                ret.append(self.values[0][i] * other)
-            return Vector([ret])
-        elif self.shape[1] == 1:
-            for i in range(self.shape[0]):
-                ret.append([self.values[i][0] * other])
-            return Vector(ret)
+        values = copy.deepcopy(self.values)
+        for i in range(self.shape[0]):
+            for j in range(self.shape[1]):
+                values[i][j] *= other
+        return Vector(values)
 
     def __rmul__(self, other: float) -> 'Vector':
         """Multiply a vector by a scalar"""
