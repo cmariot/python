@@ -1,7 +1,6 @@
 def ft_map(function, iterable):
     for element in iterable:
         yield function(element)
-    return None
 
 
 if __name__ == "__main__":
