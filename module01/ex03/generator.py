@@ -21,13 +21,16 @@ def generator(string: str, sep: str = " ", option: str = "none") -> str:
         or not isinstance(option, str)
             or option not in ["none", "shuffle", "unique", "ordered"]):
         return "ERROR"
+
     substrings: list[str] = string.split(sep)
+
     if option == "shuffle":
         substrings = shuffle(substrings)
     elif option == "ordered":
         substrings.sort()
     elif option == "unique":
         substrings = list(dict.fromkeys(substrings))
+
     for substring in substrings:
         yield substring
 

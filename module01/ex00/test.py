@@ -61,8 +61,7 @@ def test_book():
     # Test the __str__ method
     print(cookbook)
 
-    to_print = "creation_date: {}"
-    print(to_print.format(cookbook.creation_date))
+    print("creation_date: {}".format(cookbook.creation_date))
 
     cake = Recipe(name="cake", cooking_lvl=3,
                   cooking_time=20, ingredients=["eggs", "flour"],
