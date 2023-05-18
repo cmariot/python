@@ -1,8 +1,9 @@
 import time
+import shutil
 
 
 def ft_progress(iterable,
-                length=50,
+                length=shutil.get_terminal_size().columns - 2,
                 fill='█',
                 empty='░',
                 print_end='\r'):
@@ -27,27 +28,43 @@ def ft_progress(iterable,
     ```
     """
 
+    total = len(iterable)
     start = time.time()
-    total = 0
-    for _ in iterable:
-        total += 1
-    filled_length = 0
-    fmt_percent = '{0:3.0f}%'
-    fmt_eta = '{0:5.2f}s'
-    fmt_et = '{0:.2f}s'
-    i = 0
-    while (i < total):
-        percent = (i + 1) / total * 100
-        filled_length = int(length * (i + 1) // total)
+    for i, item in enumerate(iterable, start=1):
         elapsed_time = time.time() - start
-        eta = elapsed_time * (total / (i + 1) - 1)
-        bar = "[ETA:" + fmt_eta.format(eta) + "]"\
-            + " [" + fmt_percent.format(percent) + '] '\
-            + fill * filled_length\
-            + empty * (length - filled_length) + ' '\
-            + str(i + 1) + "/" + str(total) \
-            + " | elapsed time " + fmt_et.format(elapsed_time)
+        eta = elapsed_time * (total / i - 1)
+        current_percent = (i / total) * 100
+        filled_length = int(length * i / total)
+        if eta == 0.0:
+            eta_str = '[DONE]    '
+        elif eta < 60:
+            eta_str = f'[ETA {eta:.0f} s]'
+        elif eta < 3600:
+            eta_str = f'[ETA {eta / 60:.0f} m]'
+        else:
+            eta_str = f'[ETA {eta / 3600:.0f} h]'
+        percent_str = f'[{current_percent:6.2f} %] '
+        progress_str = fill * filled_length + empty * (length - filled_length)
+        counter_str = f' [{i:>{len(str(total))}}/{total}] '
+        if elapsed_time < 60:
+            elapsed_time_str = f' [Elapsed-time {elapsed_time:.2f} s]'
+        elif elapsed_time < 3600:
+            elapsed_time_str = f' [Elapsed-time {elapsed_time / 60:.2f} m]'
+        else:
+            elapsed_time_str = f' [Elapsed-time {elapsed_time / 3600:.2f} h]'
+        bar = ("\033[F\033[K " + progress_str + "\n"
+               + elapsed_time_str
+               + counter_str
+               + percent_str
+               + eta_str)
         print(bar, end=print_end)
-        i += 1
         yield i
 
+
+if __name__ == '__main__':
+    listy = range(1000)
+    ret = 0
+    for elem in ft_progress(listy):
+        ret += (elem + 3) % 5
+        time.sleep(0.05)
+    print()
