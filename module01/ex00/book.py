@@ -5,9 +5,6 @@ import datetime
 class Book:
 
     def __init__(self, name: str):
-        """
-        Class constructor
-        """
         try:
             self.name = self.__check_name(name)
             self.creation_date = self.last_update = datetime.datetime.now()
@@ -24,10 +21,15 @@ class Book:
         """
         Return the string to print with the book info
         """
-        return f"""Book name: {self.name}
+        ret = f"""Book name: {self.name}
 Creation date: {self.creation_date}
 Last update: {self.last_update}
-Recipes: {self.recipes_list}"""
+Recipes: """
+        for recipe in self.recipes_list:
+            ret += f"\n\tFor {recipe} :"
+            for recipe_type in self.recipes_list[recipe]:
+                ret += f"\n\n{recipe_type}\n"
+        return ret
 
     def __check_name(self, name: str) -> str:
         """

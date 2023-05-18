@@ -8,20 +8,21 @@ if __name__ == "__main__":
     v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
     v2 = v1 * 5
     print(v2)
-
     # Expected output:
     # Vector([[0.0], [5.0], [10.0], [15.0]])
+
     # Row vector of shape 1 * n
     v1 = Vector([[0.0, 1.0, 2.0, 3.0]])
     v2 = v1 * 5
     print(v2)
-
     # Expected output
     # Vector([[0.0, 5.0, 10.0, 15.0]])
+
     v2 = v1 / 2.0
     print(v2)
     # Expected output
-    # Vector([[0.0], [0.5], [1.0], [1.5]])
+    # Vector([[0.0, 0.5, 1.0, 1.5]])
+    # (Erreur dans l'expected output du sujet)
 
     try:
         v1 / 0.0
@@ -37,6 +38,8 @@ if __name__ == "__main__":
         # Expected output:
         # NotImplementedError: \
         # Division of a scalar by a Vector is not defined here.
+
+    print()
 
     # TEST PART II
 
@@ -58,20 +61,21 @@ if __name__ == "__main__":
     # Expected output
     # [[0.0, 1.0, 2.0, 3.0]]
 
+    print()
     # TEST PART III
 
-    print()
     # Example 1:
     v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
     print(v1.shape)
     # Expected output:
     # (4, 1)
+
     print(v1.T())
     # Expected output:
     # Vector([[0.0, 1.0, 2.0, 3.0]])
+
     print(v1.T().shape)
-    # Expected output:
-    # (1,4)
+    # Expected output: # (1,4)
 
     # Example 2:
     v2 = Vector([[0.0, 1.0, 2.0, 3.0]])
@@ -82,15 +86,16 @@ if __name__ == "__main__":
     print(v2.T())
     # Expected output:
     # Vector([[0.0], [1.0], [2.0], [3.0]])
-    print(v2.T().shape)
-    # Expected output:
-    # (4,1)
 
+    print(v2.T().shape)
+    # Expected output: # (4,1)
+
+    print()
     # TEST PART IV
 
     # Example 1:
-    v1 = Vector([[0.0], [1.0], [2.0], [3.0]])
-    v2 = Vector([[2.0], [1.5], [2.25], [4.0]])
+    v1 = Vector([[0.0, 1.0, 2.0, 3.0]])
+    v2 = Vector([[2.0, 1.5, 2.25, 4.0]])
     print(v1.dot(v2))
     # Expected output:
     # 18.0
@@ -99,11 +104,18 @@ if __name__ == "__main__":
     v4 = Vector([[2.0, 4.0]])
     print(v3.dot(v4))
     # Expected output:
-    # 13.0
+    # 14.0
+    # (Erreur dans l'expected output du sujet) : 1 * 2 + 3 * 4 = 14
 
     v1
     # Expected output: to see what __repr__() should do
+    # (IN THE INTERPRETER !)
     # [[0.0, 1.0, 2.0, 3.0]]
-    # print(v1)
+    print(v1)
     # Expected output: to see what __str__() should do
     # [[0.0, 1.0, 2.0, 3.0]]
+
+    # TESTS PART V
+
+    print(Vector(3))
+    print(Vector((10, 16)))

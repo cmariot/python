@@ -67,12 +67,12 @@ class Vector:
         if (self.shape[0] == 1):
             for i in range(self.shape[1]):
                 new_list.append([self.values[0][i]])
-            return Vector(new_list)
         else:
             new_list.append([])
             for i in range(self.shape[0]):
                 new_list[0].append(self.values[i][0])
-            return Vector(new_list)
+        self = Vector(new_list)
+        return self
 
     def __str__(self) -> str:
         """Return the vector as a string"""
@@ -129,7 +129,8 @@ class Vector:
     def __rtruediv__(self, other: 'Vector') -> 'Vector':
         """Divide a vector by a scalar"""
         raise NotImplementedError(
-            "Division of a scalar by a Vector is not defined here.")
+            "NotImplementedError: Division of a scalar by a"
+            + "Vector is not defined here.")
 
     def __mul__(self, other: float) -> 'Vector':
         """Multiply a vector by a scalar"""
