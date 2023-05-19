@@ -1,4 +1,15 @@
 def ft_map(function, iterable):
+
+    """
+    Map the function to all elements of the iterable.
+    Args:
+        function_to_apply: a function taking an iterable.
+        iterable: an iterable object (list, tuple, iterator).
+    Return:
+        An iterable.
+        None if the iterable can not be used by the function.
+    """
+
     if not hasattr(function, '__call__'):
         raise TypeError(f"'{type(function).__name__}' object is not callable")
     elif not hasattr(iterable, '__iter__'):

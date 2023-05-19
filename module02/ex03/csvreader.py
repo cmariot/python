@@ -9,17 +9,17 @@ class CsvReader():
                  header=False,
                  skip_top=0,
                  skip_bottom=0):
+
         if (filename is None or type(filename) is not str):
             raise ValueError("filename must be a string")
-        elif (type(sep) is not str):
+        elif type(sep) is not str:
             raise ValueError("sep must be a string")
-        elif (type(header) is not bool):
+        elif type(header) is not bool:
             raise ValueError("header must be a boolean")
         elif ((type(skip_top) is not int) or (skip_top < 0)):
             raise ValueError("skip_top must be a positive integer")
         elif ((type(skip_bottom) is not int) or (skip_bottom < 0)):
             raise ValueError("skip_bottom must be a positive integer")
-
         self.filename = filename
         self.fd = None
         self.sep = sep
@@ -51,7 +51,7 @@ class CsvReader():
         if self.skip_bottom > 0:
             self.data = self.data[:-self.skip_bottom]
 
-        if len(self.data) == 0:
+        if not self.data:
             return None
 
         first_row_len = len(self.data[0])
@@ -60,7 +60,7 @@ class CsvReader():
                 return None
             for j, field in enumerate(line):
                 self.data[i][j] = field.strip()
-                if len(field) == 0:
+                if len(self.data[i][j]) == 0:
                     return None
         return self
 
@@ -71,6 +71,7 @@ class CsvReader():
     def getheader(self):
         """ Retrieves the header from csv file.
         Returns:
+
                 list: representing the data (when self.header is True).
                 None: (when self.header is False).
         """
@@ -87,20 +88,43 @@ class CsvReader():
 
 if __name__ == "__main__":
 
-    with CsvReader('good.csv', header=True) as file:
-        if file is None:
-            print("File is corrupted")
-        else:
-            data = file.getdata()
-            header = file.getheader()
-            print("Header :", header)
-            print("Data :", data)
+    # EXAMPLE 1 : GOOD CSV FILE
+    try:
 
-    with CsvReader('bad.csv', header=True) as file:
-        if file is None:
-            print("File is corrupted")
-        else:
-            data = file.getdata()
-            header = file.getheader()
-            print(header)
-            print(data)
+        with CsvReader('good11.csv', sep=',', header=True,
+                       skip_top=0, skip_bottom=100) as file:
+
+            if file is None:
+
+                print("File is corrupted, does not exist or is empty.")
+
+            else:
+
+                data = file.getdata()
+                header = file.getheader()
+                print("HEADER  :\n", header)
+                print("\nCONTENT :\n", data)
+
+    except Exception as e:
+
+        print(e)
+
+    # EXAMPLE 2 : BAD CSV FILE
+    try:
+
+        with CsvReader('bad.csv', header=True) as file:
+
+            if file is None:
+
+                print("File is corrupted")
+
+            else:
+
+                data = file.getdata()
+                header = file.getheader()
+                print("HEADER  :\n", header)
+                print("\nCONTENT :\n", data)
+
+    except Exception as e:
+
+        print(e)

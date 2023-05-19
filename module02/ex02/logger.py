@@ -4,8 +4,9 @@ import os
 
 
 def log(function):
+
     """
-    This is a decorator that logs into a file called machine.log :
+        This is a decorator that logs into a file called machine.log :
         - the time of execution of a function
         - the user who executed it
         - the name of the function
@@ -23,7 +24,9 @@ def log(function):
         ret = function(*args, **kwargs)
         exec_time = time.time() - start
 
-        if exec_time > 1:
+        if exec_time > 60:
+            exec_time = "{:.3f} m".format(exec_time / 60)
+        elif exec_time > 1:
             exec_time = "{:.3f} s ".format(exec_time)
         else:
             exec_time = "{:.3f} ms".format(exec_time * 1000)
@@ -32,7 +35,7 @@ def log(function):
             f.write(
                 "({})Running: {:20} [ exec-time = {} ]\n"
                 .format(user, function_name, exec_time))
-        f.close()
+
         return ret
 
     return inner
