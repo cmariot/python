@@ -9,15 +9,43 @@ def ft_map(function, iterable):
 
 if __name__ == "__main__":
 
-    x = [1, 2, 3, 4, 5]
+    # iterator = ft_map(lambda dum: dum + 1, x)
+    # print(iterator)
+    # print(list(iterator))
 
-    iterator = ft_map(lambda dum: dum + 1, x)
+    # try:
+    #     ite = ft_map(lambda dum: dum + 'a', 42)
+    #     print(list(ite))
+    # except TypeError as e:
+    #     print(e)
 
-    print(iterator)
-    print(list(iterator))
+    def no_arg():
+        return 0
+
+    def plus_one(x):
+        return x + 1
+
+    # function = None
+    # function = "not_callable"
+    # function = no_arg
+    function = plus_one
+
+    # iterable = 0
+    # iterable = "string"
+    # iterable = 'a'
+    # iterable = []
+    iterable = [1, 2, 3, 4]
 
     try:
-        ite = ft_map(lambda dum: dum + 'a', 42)
-        print(list(ite))
-    except TypeError as e:
-        print(e)
+        ite = ft_map(function, iterable)
+        lst = list(ite)
+        print("My map   :", lst)
+    except Exception as error:
+        print("My map exception   :", error)
+
+    try:
+        ite = map(function, iterable)
+        lst = list(ite)
+        print("Real map :", lst)
+    except Exception as error:
+        print("Real map exception :", error)

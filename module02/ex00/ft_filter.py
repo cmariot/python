@@ -1,14 +1,26 @@
 def ft_filter(function, iterable):
-    if function is not None and not hasattr(function, '__call__'):
-        raise TypeError(f"'{type(function).__name__}' object is not callable")
-    elif not hasattr(iterable, '__iter__'):
-        raise TypeError(f"'{type(iterable).__name__}' object is not iterable")
-    for element in iterable:
-        if function is None:
+    if not hasattr(iterable, '__iter__'):
+        raise TypeError(f"'{type(iterable).__name__}'"
+                        + " object is not iterable")
+    elif function is None:
+        for element in iterable:
             if element:
                 yield element
-        elif function(element) is True:
-            yield element
+    else:
+        if not hasattr(function, '__call__'):
+            raise TypeError(f"'{type(function).__name__}'"
+                            + " object is not callable")
+        for element in iterable:
+            if function(element) is True:
+                yield element
+
+
+def no_arg():
+    return 0
+
+
+def plus_one(x):
+    return x + 1
 
 
 def is_more_than_5(x):
@@ -17,17 +29,43 @@ def is_more_than_5(x):
 
 if __name__ == "__main__":
 
-    x = [1, 2, 3, 4, 5]
+    # x = [1, 2, 3, 4, 5]
 
-    iterator = ft_filter(lambda dum: not (dum % 2), x)
-    list_even = list(ft_filter(lambda dum: not (dum % 2), x))
-    print(list_even)
+    # iterator = ft_filter(lambda dum: not (dum % 2), x)
+    # list_even = list(ft_filter(lambda dum: not (dum % 2), x))
+    # print(list_even)
 
-    iterable = [1, 2, 3, 4, 5, 6, 7, 8, 9]
-    iterator = ft_filter(is_more_than_5, iterable)
-    lst_5 = list(iterator)
-    print(lst_5)
+    # iterable = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    # iterator = ft_filter(is_more_than_5, iterable)
+    # lst_5 = list(iterator)
+    # print(lst_5)
 
-    iterator = ft_filter(None, iterable)
-    lst_none = list(iterator)
-    print(lst_none)
+    # iterator = ft_filter(None, iterable)
+    # lst_none = list(iterator)
+    # print(lst_none)
+
+    # function = None
+    # function = "not_callable"
+    # function = no_arg
+    function = is_more_than_5
+
+    # iterable = 0
+    # iterable = "string"
+    # iterable = 'a'
+    # iterable = []
+    # iterable = [True, False, True, False]
+    iterable = [1, 2, 3, 4, 5, 6, 7, 8]
+
+    try:
+        ite = ft_filter(function, iterable)
+        lst = list(ite)
+        print("My filter   :", lst)
+    except Exception as error:
+        print("My filter exception   :", error)
+
+    try:
+        ite = filter(function, iterable)
+        lst = list(ite)
+        print("Real filter :", lst)
+    except Exception as error:
+        print("Real filter exception :", error)
