@@ -1,6 +1,7 @@
-import time
 from random import randint
-import os
+from time import time
+from time import sleep
+from os import environ
 
 
 def log(function):
@@ -13,15 +14,15 @@ def log(function):
 
     def inner(*args, **kwargs):
 
-        user = os.environ.get('USER') or "anonymous"
+        user = environ.get('USER') or "anonymous"
 
         function_name = function.__name__.replace('_', ' ').title()
         if len(function_name) > 20:
             function_name = function_name[:17] + '...'
 
-        start = time.time()
+        start = time()
         ret = function(*args, **kwargs)
-        exec_time = time.time() - start
+        exec_time = time() - start
 
         if exec_time > 1:
             exec_time = "{:.3f} s ".format(exec_time)
@@ -58,14 +59,14 @@ class CoffeeMachine():
     def make_coffee(self):
         if self.start_machine():
             for _ in range(20):
-                time.sleep(0.1)
+                sleep(0.1)
                 self.water_level -= 1
             print(self.boil_water())
             print("Coffee is ready!")
 
     @log
     def add_waAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAter(self, water_level):
-        time.sleep(randint(1, 5))
+        sleep(randint(1, 5))
         self.water_level += water_level
         print("Blub blub blub...")
 

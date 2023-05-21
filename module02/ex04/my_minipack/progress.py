@@ -58,7 +58,7 @@ def ft_progress(iterable,
                + percent_str
                + eta_str)
         print(bar, end=print_end)
-        yield i
+        yield item
 
 
 if __name__ == '__main__':
