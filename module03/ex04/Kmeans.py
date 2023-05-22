@@ -1,7 +1,7 @@
-import sys
 import csv
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
 
 class KmeansClustering:
@@ -25,32 +25,7 @@ class KmeansClustering:
             Raises:
                 This function should not raise any Exception.
         """
-
-        # - random pick ncentroids from the dataset
-        for i in range(self.ncentroid):
-            random_index = np.random.randint(0, len(X))
-            self.centroids.append(X[random_index])
-
-        print("Centroids: {}".format(self.centroids))
-
-        # - run the K-means clustering algorithm
-        for i in range(self.max_iter):
-            # - assign each datapoint to the closest centroid
-            clusters = [[] for _ in range(self.ncentroid)]
-            for datapoint in X:
-                distances = []
-                for j in range(self.ncentroid):
-                    # Distance between datapoint and centroid
-                    print("Centroid: {}".format(self.centroids[j]))
-                    distance = np.linalg.norm(self.centroids[j] - datapoint)
-                    distances.append(distance)
-                print("Distances: {}".format(distances))
-                # distances = np.linalg.norm(self.centroids - datapoint, axis=1)
-                # closest_centroid_index = np.argmin(distances)
-                # clusters[closest_centroid_index].append(datapoint)
-            # - update the centroids
-            for j in range(self.ncentroid):
-                self.centroids[j] = np.mean(clusters[j], axis=0)
+        pass
 
     def predict(self, X):
         """
@@ -65,22 +40,41 @@ class KmeansClustering:
             Raises:
                 This function should not raise any Exception.
         """
-        pass
+        # - random pick ncentroids from the dataset
+        for i in range(self.ncentroid):
+            random_index = np.random.randint(0, len(X))
+            self.centroids.append(X[random_index])
+
+        print("Centroids: {}".format(self.centroids))
+
+        # - run the K-means clustering algorithm
+        for i in range(self.max_iter):
+            # - assign each datapoint to the closest centroid
+            clusters = [[] for i in range(self.ncentroid)]
+            for datapoint in X:
+                distances = []
+                for j in range(self.ncentroid):
+                    # Distance between datapoint and centroid
+                    distance = np.linalg.norm(self.centroids[j] - datapoint)
+                    distances.append(distance)
+                closest_centroid_index = np.argmin(distances)
+                clusters[closest_centroid_index].append(datapoint)
+            # - update the centroids
+            for j in range(self.ncentroid):
+                self.centroids[j] = np.mean(clusters[j], axis=0)
+        return clusters
 
 
-def parsing_failed(filename, ncentroids, max_iter):
-    if not isinstance(filename, str):
-        return True
-    if not filename.endswith(".csv"):
-        return True
-    try:
-        ncentroids = int(ncentroids)
-        max_iter = int(max_iter)
-    except ValueError:
-        return True
-    if ncentroids < 1 or max_iter < 1:
-        return True
-    return False
+def get_args():
+    """
+    Parse the arguments of the program with argparse
+    """
+    parser = argparse.ArgumentParser(description='Kmeans clustering algorithm')
+    parser.add_argument('filename', type=str, help='the file to read')
+    parser.add_argument('ncentroids', type=int, help='the number of centroids')
+    parser.add_argument('max_iter', type=int, help='the number of iterations')
+    args = parser.parse_args()
+    return args.filename, args.ncentroids, args.max_iter
 
 
 class CsvReader():
@@ -168,16 +162,8 @@ class CsvReader():
         return self.data
 
 
-def main(filename, ncentroids, max_iter):
-
-    # - parse the arguments
-    if parsing_failed(filename, ncentroids, max_iter):
-        print("Error while parsing arguments")
-        exit(1)
-
-    # - read the dataset from the file and store the data in an array
+def read_file(filename):
     try:
-
         with CsvReader(filename, sep=',', header=True) as file:
             if file is None:
                 print("File is corrupted, does not exist or is empty.")
@@ -188,17 +174,23 @@ def main(filename, ncentroids, max_iter):
                 y = float(line[2])
                 z = float(line[3])
                 data.append([x, y, z])
-            dataset = np.array(data)
+            return np.array(data)
 
     except Exception as e:
         print(e)
         exit(1)
 
+
+def main():
+    # - parse the arguments
+    filename, ncentroids, max_iter = get_args()
+
+    # - read the dataset from the file and store the data in an array
+    dataset = read_file(filename)
+    print(dataset)
+
     # - create a Kmeans object
     kmean = KmeansClustering(max_iter, ncentroids)
-
-    # - fit the dataset
-    kmean.fit(dataset)
 
     # - predict the result
     result = kmean.predict(dataset)
@@ -211,14 +203,33 @@ def main(filename, ncentroids, max_iter):
     #   2 parameters, the results. (Use different colors to distinguish
     #   between Venus, Earth, Mars and Belt asteroids citizens.)
     fig = plt.figure()
-    fig.add_subplot(111, projection='3d')
+    ax1 = fig.add_subplot(111, projection='3d')
+
+    colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k', 'w', 'orange', 'purple']
+    for i in range(len(result)):
+        result[i] = np.array(result[i])
+        print("Cluster {}:".format(i))
+        print(result[i])
+        print("Number of individuals: {}".format(len(result[i])))
+        print("Centroid: {}".format(kmean.centroids[i]))
+        print()
+        x = result[i][:, 0]
+        y = result[i][:, 1]
+        z = result[i][:, 2]
+        color = colors[i]
+        centroid_x = kmean.centroids[i][0]
+        centroid_y = kmean.centroids[i][1]
+        centroid_z = kmean.centroids[i][2]
+        ax1.scatter(centroid_x, centroid_y, centroid_z, c=color, marker='x')
+        ax1.scatter(x, y, z, c=color, marker='o')
+
+    ax1.set_xlabel('Height')
+    ax1.set_ylabel('Weight')
+    ax1.set_zlabel('Bone density')
 
     plt.show()
     pass
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
-        print("Usage: python3 Kmeans.py file ncentroids max_iter")
-        exit(1)
-    main(sys.argv[1], sys.argv[2], sys.argv[3])
+    main()
