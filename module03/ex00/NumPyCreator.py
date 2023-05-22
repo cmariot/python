@@ -85,7 +85,6 @@ class NumPyCreator:
 
 
 if __name__ == "__main__":
-
     npc = NumPyCreator()
 
     shape = (3, 5)
@@ -137,8 +136,25 @@ if __name__ == "__main__":
           npc.from_iterable(((1, 2, 3), (6, 3, 4))))
 
     print("\nFROM SHAPE")
-    print(npc.from_shape(shape))
+    print("\n0 x 0 array :\n", npc.from_shape((0, 0)))
+    print("\n1 x 0 array :\n", npc.from_shape((1, 0)))
+    print("\n0 x 1 array :\n", npc.from_shape((0, 1)))
+    print("\n1 x 1 array :\n", npc.from_shape((1, 1)))
+    print("\n1 x 6 array :\n", npc.from_shape((1, 6)))
+    print("\n2 x 3 array :\n", npc.from_shape((2, 3)))
 
-    print(npc.random(shape))
+    print("\nRANDOM")
+    print("\n0 x 0 random array :\n", npc.random((0, 0)))
+    print("\n1 x 0 random array :\n", npc.random((1, 0)))
+    print("\n0 x 1 random array :\n", npc.random((0, 1)))
+    print("\n1 x 1 random array :\n", npc.random((1, 1)))
+    print("\n1 x 6 random array :\n", npc.random((1, 6)))
+    print("\n2 x 3 random array :\n", npc.random((2, 3)))
 
-    print(npc.identity(4))
+    print("\nIDENTITY")
+    print("\n0 identity array :\n", npc.identity(0))
+    print("\n1 identity array :\n", npc.identity(1))
+    print("\n2 identity array :\n", npc.identity(2))
+    print("\n3 identity array :\n", npc.identity(3))
+    print("\n4 identity array :\n", npc.identity(4))
+
