@@ -157,4 +157,3 @@ if __name__ == "__main__":
     print("\n2 identity array :\n", npc.identity(2))
     print("\n3 identity array :\n", npc.identity(3))
     print("\n4 identity array :\n", npc.identity(4))
-

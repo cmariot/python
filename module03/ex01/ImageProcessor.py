@@ -45,19 +45,18 @@ class ImageProcessor:
         """
 
         try:
-            # Display the image
             plt.imshow(image_array)
             plt.axis('off')
             plt.show()
 
-        except Exception as e:
-            print("An error occurred while displaying the image:", str(e))
+        except Exception as error:
+            print("An error occurred while displaying the image:", str(error))
 
 
 if __name__ == "__main__":
 
     image_processor = ImageProcessor()
-    image_path = input("Enter the path to an image file: ")
+    image_path = input("Enter the path of an image file: ")
 
     pixels_array = image_processor.load(image_path)
     if pixels_array is not None:

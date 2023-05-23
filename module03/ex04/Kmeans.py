@@ -45,8 +45,6 @@ class KmeansClustering:
             random_index = np.random.randint(0, len(X))
             self.centroids.append(X[random_index])
 
-        print("Centroids: {}".format(self.centroids))
-
         # - run the K-means clustering algorithm
         for i in range(self.max_iter):
             # - assign each datapoint to the closest centroid
@@ -191,19 +189,29 @@ def display_plots(results, kmean):
       between Venus, Earth, Mars and Belt asteroids citizens.)
     """
 
-    fig1 = plt.figure(1)
-    height_weight = fig1.add_subplot()
-    height_weight.set_xlabel("Height")
-    height_weight.set_ylabel("Weight")
+    figure, ax = plt.subplots(1, 3)
+
+    ax[0].set_xlabel('Height')
+    ax[0].set_ylabel('Weight')
+
+    ax[1].set_xlabel('Height')
+    ax[1].set_ylabel('Bone density')
+
+    ax[2].set_xlabel('Weight')
+    ax[2].set_ylabel('Bone density')
 
     colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k', 'orange', 'purple']
+
     for i in range(len(results)):
         results[i] = np.array(results[i])
-        height_weight.plot(results[i][0], results[i][1], colors[i], 'x')
+        ax[0].scatter(x=results[i][:, 0], y=results[i][:, 1],
+                      c=colors[i], marker='x')
+        ax[1].scatter(x=results[i][:, 0], y=results[i][:, 2],
+                      c=colors[i], marker='x')
+        ax[2].scatter(x=results[i][:, 1], y=results[i][:, 2],
+                      c=colors[i], marker='x')
 
     plt.show()
-#    height_bonedensity = 0
-#    bonedensity_weight = 0
 
 
 def display_results(result, kmean):
@@ -221,18 +229,18 @@ def display_results(result, kmean):
         print("Number of individuals: {}".format(len(result[i])))
         print("Centroid: {}".format(kmean.centroids[i]))
         print()
-
-        ax1.scatter(kmean.centroids[i][0],
-                    kmean.centroids[i][1],
-                    kmean.centroids[i][2],
-                    c=colors[i],
-                    marker='x')
-
         ax1.scatter(result[i][:, 0],
                     result[i][:, 1],
                     result[i][:, 2],
                     c=colors[i],
                     marker='o')
+
+    for i in range(len(kmean.centroids)):
+        ax1.scatter(kmean.centroids[i][0],
+                    kmean.centroids[i][1],
+                    kmean.centroids[i][2],
+                    c=colors[i],
+                    marker='x')
 
     plt.show()
 

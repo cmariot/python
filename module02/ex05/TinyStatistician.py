@@ -5,16 +5,23 @@ class TinyStatistician:
 
     def median(self, x) -> float:
         x.sort()
-        if len(x) % 2 == 0:
+        list_len = len(x)
+        if list_len == 0:
+            return None
+        elif list_len % 2 == 0:
             return float(x[len(x) // 2 - 1] + x[len(x) // 2]) / 2
         else:
             return float(x[len(x) // 2])
 
     def quartile(self, x) -> 'list[float]':
+        if len(x) == 0:
+            return None
         x.sort()
         return [float(x[len(x) // 4]), float(x[len(x) // 4 * 3])]
 
     def var(self, x) -> float:
+        if len(x) == 0:
+            return None
         mean = TinyStatistician.mean(self, x)
         return sum([(i - mean) ** 2 for i in x]) / len(x)
 
