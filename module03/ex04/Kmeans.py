@@ -74,6 +74,9 @@ def get_args():
     parser.add_argument('ncentroids', type=int, help='the number of centroids')
     parser.add_argument('max_iter', type=int, help='the number of iterations')
     args = parser.parse_args()
+    if args.ncentroids < 1 or args.max_iter < 1:
+        raise ValueError(
+            "Error: ncentroids and max_iter args must be positive intergers.")
     return args.filename, args.ncentroids, args.max_iter
 
 
@@ -181,31 +184,36 @@ def read_file(filename):
         exit(1)
 
 
-def main():
-    # - parse the arguments
-    filename, ncentroids, max_iter = get_args()
+def display_plots(results, kmean):
+    """
+      display on 3 differents plots, corresponding to 3 combinaisons of
+      2 parameters, the results. (Use different colors to distinguish
+      between Venus, Earth, Mars and Belt asteroids citizens.)
+    """
 
-    # - read the dataset from the file and store the data in an array
-    dataset = read_file(filename)
-    print(dataset)
+    fig1 = plt.figure(1)
+    height_weight = fig1.add_subplot()
+    height_weight.set_xlabel("Height")
+    height_weight.set_ylabel("Weight")
 
-    # - create a Kmeans object
-    kmean = KmeansClustering(max_iter, ncentroids)
+    colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k', 'orange', 'purple']
+    for i in range(len(results)):
+        results[i] = np.array(results[i])
+        height_weight.plot(results[i][0], results[i][1], colors[i], 'x')
 
-    # - predict the result
-    result = kmean.predict(dataset)
+    plt.show()
+#    height_bonedensity = 0
+#    bonedensity_weight = 0
 
-    # - display the coordinates of the different centroids and the
-    #   associated region
-    # - display the number of individuals associated to each centroid
 
-    # - display on 3 differents plots, corresponding to 3 combinaisons of
-    #   2 parameters, the results. (Use different colors to distinguish
-    #   between Venus, Earth, Mars and Belt asteroids citizens.)
-    fig = plt.figure()
+def display_results(result, kmean):
+    fig = plt.figure(0)
     ax1 = fig.add_subplot(111, projection='3d')
+    ax1.set_xlabel('Height')
+    ax1.set_ylabel('Weight')
+    ax1.set_zlabel('Bone density')
+    colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k', 'orange', 'purple']
 
-    colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k', 'w', 'orange', 'purple']
     for i in range(len(result)):
         result[i] = np.array(result[i])
         print("Cluster {}:".format(i))
@@ -213,22 +221,34 @@ def main():
         print("Number of individuals: {}".format(len(result[i])))
         print("Centroid: {}".format(kmean.centroids[i]))
         print()
-        x = result[i][:, 0]
-        y = result[i][:, 1]
-        z = result[i][:, 2]
-        color = colors[i]
-        centroid_x = kmean.centroids[i][0]
-        centroid_y = kmean.centroids[i][1]
-        centroid_z = kmean.centroids[i][2]
-        ax1.scatter(centroid_x, centroid_y, centroid_z, c=color, marker='x')
-        ax1.scatter(x, y, z, c=color, marker='o')
 
-    ax1.set_xlabel('Height')
-    ax1.set_ylabel('Weight')
-    ax1.set_zlabel('Bone density')
+        ax1.scatter(kmean.centroids[i][0],
+                    kmean.centroids[i][1],
+                    kmean.centroids[i][2],
+                    c=colors[i],
+                    marker='x')
+
+        ax1.scatter(result[i][:, 0],
+                    result[i][:, 1],
+                    result[i][:, 2],
+                    c=colors[i],
+                    marker='o')
 
     plt.show()
-    pass
+
+
+def main():
+    try:
+        filename, ncentroids, max_iter = get_args()
+    except ValueError as error:
+        print(error)
+        exit(0)
+    else:
+        dataset = read_file(filename)
+        kmean = KmeansClustering(max_iter, ncentroids)
+        result = kmean.predict(dataset)
+        display_results(result, kmean)
+        display_plots(result, kmean)
 
 
 if __name__ == "__main__":
