@@ -44,14 +44,19 @@ class ImageProcessor:
             representing an image, and displays the image.
         """
 
+        if not isinstance(image_array, np.ndarray):
+            print("Error: The image_array argument must be a NumPy array")
+            return None
+        elif len(image_array.shape) != 3:
+            print("Error: The image_array argument must be a 3D NumPy array")
+            return None
+
         try:
-            # Display the image
             plt.imshow(image_array)
             plt.axis('off')
             plt.show()
-
-        except Exception as e:
-            print("An error occurred while displaying the image:", str(e))
+        except Exception as error:
+            print("An error occurred while displaying the image:", str(error))
 
 
 class ScrapBooker:

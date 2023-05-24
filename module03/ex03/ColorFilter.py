@@ -27,7 +27,7 @@ class ImageProcessor:
             print("Image dimensions: {} x {}".format(width, height))
 
             # Return the image as a NumPy array
-            return np.asarray(image)
+            return np.array(image)
 
         except FileNotFoundError:
             print("The image file was not found.")
@@ -44,14 +44,19 @@ class ImageProcessor:
             representing an image, and displays the image.
         """
 
+        if not isinstance(image_array, np.ndarray):
+            print("Error: The image_array argument must be a NumPy array")
+            return None
+        elif len(image_array.shape) != 3:
+            print("Error: The image_array argument must be a 3D NumPy array")
+            return None
+
         try:
-            # Display the image
             plt.imshow(image_array)
             plt.axis('off')
             plt.show()
-
-        except Exception as e:
-            print("An error occurred while displaying the image:", str(e))
+        except Exception as error:
+            print("An error occurred while displaying the image:", str(error))
 
 
 class ColorFilter:
@@ -73,6 +78,7 @@ class ColorFilter:
 
         """
         inverted_array = array.copy()
+
         inverted_array[:, :, 0] = 255 - inverted_array[:, :, 0]  # R
         inverted_array[:, :, 1] = 255 - inverted_array[:, :, 1]  # G
         inverted_array[:, :, 2] = 255 - inverted_array[:, :, 2]  # B

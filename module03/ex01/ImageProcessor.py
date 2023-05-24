@@ -44,20 +44,30 @@ class ImageProcessor:
             representing an image, and displays the image.
         """
 
+        if not isinstance(image_array, np.ndarray):
+            print("Error: The image_array argument must be a NumPy array")
+            return None
+        elif len(image_array.shape) != 3:
+            print("Error: The image_array argument must be a 3D NumPy array")
+            return None
+
         try:
             plt.imshow(image_array)
             plt.axis('off')
             plt.show()
-
         except Exception as error:
             print("An error occurred while displaying the image:", str(error))
 
 
 if __name__ == "__main__":
 
-    image_processor = ImageProcessor()
-    image_path = input("Enter the path of an image file: ")
+    image_processor: ImageProcessor = ImageProcessor()
 
-    pixels_array = image_processor.load(image_path)
-    if pixels_array is not None:
-        image_processor.display(pixels_array)
+    try:
+        image_path: str = input("Enter the path of an image file: ")
+    except Exception:
+        print("\nError: Inavid input")
+    else:
+        pixels_array: ndarray = image_processor.load(image_path)
+        if pixels_array is not None:
+            image_processor.display(pixels_array)
