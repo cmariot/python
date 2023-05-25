@@ -64,7 +64,7 @@ if __name__ == "__main__":
     image_processor: ImageProcessor = ImageProcessor()
 
     try:
-        image_path: str = input("Enter the path of an image file: ")
+        image_path: str = "../images/elon_canaGAN.png"
     except Exception:
         print("\nError: Inavid input")
     else:

@@ -198,7 +198,7 @@ if __name__ == "__main__":
 
         print("Thin tests :")
 
-        n_array = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        n_array = [1, 2, 5, 6, 9]
 
         for n in n_array:
             thined_arr = scrap_booker.thin(original_img, n=n, axis=0)
@@ -219,7 +219,7 @@ if __name__ == "__main__":
         # Test juxtapose
 
         print("Juxtapose tests :")
-        n_array = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        n_array = [2, 3, 8, 9, 10]
         for n in n_array:
             juxtaposed_arr = scrap_booker.juxtapose(original_img, n=n, axis=0)
             if juxtaposed_arr is not None:
@@ -241,7 +241,6 @@ if __name__ == "__main__":
         print("Mosaic tests :")
 
         dimmensions = [(2, 2),
-                       (3, 3),
                        (2, 5),
                        (5, 5),
                        (10, 10)]

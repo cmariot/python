@@ -3,64 +3,59 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 import random
-# from sklearn import tree
-
-
-# def decision_tree():
-
-#     X = [[0, 0], [1, 1]]
-#     Y = [0, 1]
-#     clf = tree.DecisionTreeClassifier()
-#     clf = clf.fit(X, Y)
-#     clf.predict([[2., 2.]])
-#     tree.plot_tree(clf)
 
 
 def planet_prediction(kmean):
 
-    min_height, min_height_index = None, None
-    max_height, max_height_index = None, None
-    min_weight, min_weight_index = None, None
-    max_weight, max_weight_index = None, None
-    min_bone_density, min_density_index = None, None
-    max_bone_density, max_density_index = None, None
+    # Get the vector array of the centroids
+    centroids = np.array(kmean.centroids)
 
+    # Get the index of the centroid with the highest height
+    max_height_index = np.argmax(centroids[:, 0])
+    # Get the index of the centroid with the highest weight
+    max_weight_index = np.argmax(centroids[:, 1])
+    # Get the index of the centroid with the lowest weight
+    min_weight_index = np.argmin(centroids[:, 1])
+    # Get the index of the centroid with the lowest bone density
+    min_density_index = np.argmin(centroids[:, 2])
+
+    venus = mars = earth = belt = 5
+
+    # Determine the index of the centroid of Belt
+    # Citizens of the Belt are the tallest of the solar system and
+    # have the lowest bone density due to the lack of gravity.
     for i in range(len(kmean.centroids)):
-        centroid = kmean.centroids[i]
-        if (min_height_index is None or centroid[0] < min_height):
-            min_height, min_height_index = centroid[0], i
-        if (max_height_index is None or centroid[0] > max_height):
-            max_height, max_height_index = centroid[0], i
-        if (min_weight_index is None or centroid[1] < min_weight):
-            min_weight, min_weight_index = centroid[1], i
-        if (max_weight_index is None or centroid[1] > max_weight):
-            max_weight, max_weight_index = centroid[1], i
-        if (min_density_index is None or centroid[2] < min_bone_density):
-            min_bone_density, min_density_index = centroid[2], i
-        if (max_density_index is None or centroid[2] > max_bone_density):
-            max_bone_density, max_density_index = centroid[2], i
+        if (i == max_height_index and i == min_density_index):
+            belt = i
+            break
+        elif (i == max_height_index):
+            belt = i
+            break
 
-    print("Predicted values:")
+    # Determine the index of the centroid of Earth
+    # People of Earth are heaviest than Venus
+    # and are smaller than Martians.
+    for i in range(len(kmean.centroids)):
+        if (i != belt
+            and i != max_height_index
+                and i != min_weight_index):
+            earth = i
+            break
 
-    print("People are slender on Venus than on Earth.")
-    print("People of the Martian Republic are taller than on Earth.")
-    print("Citizens of the Belt are the tallest of the solar system and have" +
-          "the lowest bone density due to the lack of gravity.")
+    # Determine the index of the centroid of Venus
+    # People are slender on Venus than on Earth.
+    for i in range(len(kmean.centroids)):
+        if (i != belt and i != earth and i != max_weight_index):
+            venus = i
+            break
 
-    # A revoir, pas satisfait de cette partie,
-    # Faire un arbre de decision pour obtenir des probas d'appartenance ?
+    # Determine the index of the centroid of Mars
+    # People of the Martian Republic are taller than on Earth.
+    # mars = the number between 0 and 3 that is not the index of Earth, Venus
+    # or Belt
+    mars = [i for i in range(4) if i != belt and i != earth and i != venus][0]
 
-    # decision_tree()
-
-    if max_height_index == min_density_index:
-        belt = max_height_index
-    else:
-        belt = max_weight_index
-    earth = min_height_index
-    venus = min_weight_index
-    mars = 6 - belt - earth - venus
-
-    return [("Belt", belt), ("Earth", earth), ("Venus", venus), ("Mars", mars)]
+    return [("Venus", venus), ("Mars", mars), ("Earth", earth), ("Belt", belt)]
 
 
 class KmeansClustering:
@@ -216,10 +211,10 @@ def display_plots(dataset, prediction, kmean):
     # Add labels to the plots
     ax[0].set_xlabel('Height')
     ax[0].set_ylabel('Weight')
-    ax[1].set_xlabel('Height')
-    ax[1].set_ylabel('Bone density')
-    ax[2].set_xlabel('Weight')
-    ax[2].set_ylabel('Bone density')
+    ax[1].set_xlabel('Bone density')
+    ax[1].set_ylabel('Height')
+    ax[2].set_xlabel('Bone density')
+    ax[2].set_ylabel('Weight')
 
     colors = ['r', 'g', 'b', 'y', 'c', 'm', 'k',
               'orange', 'purple', 'pink', 'brown', 'gray']
@@ -234,9 +229,9 @@ def display_plots(dataset, prediction, kmean):
         results[i] = np.array(results[i])
         ax[0].scatter(x=results[i][:, 0], y=results[i][:, 1],
                       c=colors[i % len(colors)], marker='o')
-        ax[1].scatter(x=results[i][:, 0], y=results[i][:, 2],
+        ax[1].scatter(x=results[i][:, 2], y=results[i][:, 0],
                       c=colors[i % len(colors)], marker='o')
-        ax[2].scatter(x=results[i][:, 1], y=results[i][:, 2],
+        ax[2].scatter(x=results[i][:, 2], y=results[i][:, 1],
                       c=colors[i % len(colors)], marker='o')
 
     # Add the centroids to the plots
@@ -247,16 +242,17 @@ def display_plots(dataset, prediction, kmean):
         ax[0].scatter(x=denormalized_centroid[0],
                       y=denormalized_centroid[1],
                       c=colors[i % len(colors)], marker='x')
-        ax[1].scatter(x=denormalized_centroid[0],
-                      y=denormalized_centroid[2],
+        ax[1].scatter(x=denormalized_centroid[2],
+                      y=denormalized_centroid[0],
                       c=colors[i % len(colors)], marker='x')
-        ax[2].scatter(x=denormalized_centroid[1],
-                      y=denormalized_centroid[2],
+        ax[2].scatter(x=denormalized_centroid[2],
+                      y=denormalized_centroid[1],
                       c=colors[i % len(colors)], marker='x')
 
-    # Add a legend to the plot
+    # Add a legend to the plot if there are 4 clusters
     if len(results) == 4:
         legend = planet_prediction(kmean)
+        legend.sort(key=lambda x: x[1])
         ax[0].legend([legend[i][0] for i in range(len(legend))],
                      loc=(0, 1.02), ncol=4)
 
