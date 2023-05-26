@@ -26,7 +26,7 @@ class FileLoader:
             print("Error: {}".format(error))
         return None
 
-    def display(self, df, n) -> None:
+    def display(self, df, n=0) -> None:
         """
         takes a pandas.DataFrame and an integer as arguments,
         displays the first n rows of the dataset if n is positive,
@@ -45,7 +45,7 @@ class FileLoader:
         elif n < 0:
             print(df.tail(-n))
         else:
-            print("n must be different from 0")
+            print(df)
 
 
 if __name__ == "__main__":
@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
     try:
         pandas_dataframe = file_loader.load("../ressources/athlete_events.csv")
-        file_loader.display(pandas_dataframe, 12)
+        file_loader.display(pandas_dataframe, -10)
 
     except Exception:
         exit(1)
