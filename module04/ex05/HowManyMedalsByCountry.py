@@ -1,5 +1,6 @@
-from FileLoader import FileLoader
 from pandas import DataFrame
+import pandas as pd
+import unittest
 
 
 def how_many_medals_by_country(dataframe: DataFrame, country: str):
@@ -27,6 +28,9 @@ def how_many_medals_by_country(dataframe: DataFrame, country: str):
                    'Synchronized Swimming', 'Baseball', 'Rugby Sevens',
                    'Rugby', 'Lacrosse', 'Polo']
 
+    # Drop rows with NaN values in 'Medal' column
+    dataframe = dataframe.dropna(subset=['Medal'])
+
     # Filter dataframe by country
     filtered_by_country = dataframe[dataframe['Team'] == country]
 
@@ -40,44 +44,62 @@ def how_many_medals_by_country(dataframe: DataFrame, country: str):
         subset=['Year', 'Event', 'Medal'])
 
     # List of individual sports
-    individual_sports = []
-    for sport in dataframe['Sport'].unique():
-        if sport not in team_sports:
-            individual_sports.append(sport)
+    individual_sports = dataframe[
+        ~dataframe['Sport'].isin(team_sports)]['Sport'].unique()
 
     # Filter dataframe by individual sports
     filtered_by_individual = filtered_by_country[
         filtered_by_country['Sport'].isin(individual_sports)]
 
     # Concatenate filtered_by_individual and filtered_by_team dataframes
-    medals = DataFrame.append(filtered_by_individual, filtered_by_team)
+    medals = pd.concat([filtered_by_individual, filtered_by_team])
 
-    # Sort dataframe by Year
-    medals = medals.sort_values(by=['Year'])
+    # Replace values in 'Medal' column by 'G', 'S' or 'B'
+    medals['Medal'] = medals['Medal'].replace(
+        {'Gold': 'G', 'Silver': 'S', 'Bronze': 'B'})
 
-    dict = {}
-    for index, row in medals.iterrows():
-        if row['Year'] not in dict:
-            dict[row['Year']] = {'G': 0, 'S': 0, 'B': 0}
-        if row['Medal'] == 'Gold':
-            dict[row['Year']]['G'] += 1
-        elif row['Medal'] == 'Silver':
-            dict[row['Year']]['S'] += 1
-        elif row['Medal'] == 'Bronze':
-            dict[row['Year']]['B'] += 1
+    # Group medals by year and medal type
+    grouped_medals = medals.groupby(
+        ['Year', 'Medal']).size().reset_index(name='Count')
 
-    return dict
+    # Create dictionary of dictionaries with number of medals by year
+    medal_dict = {}
+    for index, row in grouped_medals.iterrows():
+        year = row['Year']
+        medal_type = row['Medal']
+        count = row['Count']
+        if year not in medal_dict:
+            medal_dict[year] = {'G': 0, 'S': 0, 'B': 0}
+        medal_dict[year][medal_type] += count
+    return medal_dict
 
 
-if __name__ == "__main__":
-    file_loader = FileLoader()
-    try:
-        pandas_dataframe = file_loader.load(
-            "/Users/cmariot/42/python/module04/ressources/athlete_events.csv")
-        dict = how_many_medals_by_country(
-            pandas_dataframe, "France")
-        print(dict)
+class TestHowManyMedalsByCountry(unittest.TestCase):
 
-    except Exception as error:
-        print(error)
-        exit(1)
+    def test_how_many_medals_by_country(self):
+        # Create a test dataframe
+        data = {'Year': [2000, 2000, 2004, 2004, 2008, 2008],
+                'Sport': ['Basketball', 'Basketball', 'Basketball',
+                          'Football', 'Football', 'Football'],
+                'Event': ['Men\'s Basketball', 'Women\'s Basketball',
+                          'Men\'s Basketball', 'Women\'s Football',
+                          'Men\'s Football', 'Women\'s Football'],
+                'Team': ['France', 'France', 'France', 'France', 'France',
+                         'France'],
+                'Medal': ['Gold', 'Silver', 'Gold', 'Bronze', 'Silver',
+                          'Silver']
+                }
+        test_dataframe = DataFrame(data)
+
+        # Test the function with the test dataframe and 'France' as the country
+        result = how_many_medals_by_country(test_dataframe, 'France')
+
+        # Check that the result is correct
+        expected_result = {2000: {'G': 1, 'S': 1, 'B': 0},
+                           2004: {'G': 1, 'S': 0, 'B': 1},
+                           2008: {'G': 0, 'S': 2, 'B': 0}}
+        self.assertEqual(result, expected_result)
+
+
+if __name__ == '__main__':
+    unittest.main()

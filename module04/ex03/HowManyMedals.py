@@ -1,5 +1,5 @@
-from FileLoader import FileLoader
 from pandas import DataFrame
+import unittest
 
 
 def how_many_medals(dataframe: DataFrame, participant_name: str):
@@ -14,34 +14,61 @@ def how_many_medals(dataframe: DataFrame, participant_name: str):
     """
 
     if not isinstance(dataframe, DataFrame):
-        print("Error, dataframe is not a pandas.DataFrame")
+        raise TypeError("Error, dataframe is not a pandas.DataFrame")
     elif not isinstance(participant_name, str):
-        print("Error, invalid participant_name, must be a str")
+        raise TypeError("Error, invalid participant_name, must be a str")
 
     filtered_by_name = dataframe[dataframe['Name'] == participant_name]
 
+    filtered_by_name['Medal'] = filtered_by_name['Medal'].replace(
+        {'Gold': 'G', 'Silver': 'S', 'Bronze': 'B'}
+    )
+
     dict = {}
     for index, row in filtered_by_name.iterrows():
-        if row['Year'] not in dict:
-            dict[row['Year']] = {'G': 0, 'S': 0, 'B': 0}
-        if row['Medal'] == 'Gold':
-            dict[row['Year']]['G'] += 1
-        elif row['Medal'] == 'Silver':
-            dict[row['Year']]['S'] += 1
-        elif row['Medal'] == 'Bronze':
-            dict[row['Year']]['B'] += 1
+        year = row['Year']
+        medal = row['Medal']
+        if year not in dict:
+            dict[year] = {'G': 0, 'S': 0, 'B': 0}
+        dict[year][medal] += 1
     return dict
 
 
-if __name__ == "__main__":
-    file_loader = FileLoader()
-    try:
-        pandas_dataframe = file_loader.load(
-            "/Users/cmariot/42/python/module04/ressources/athlete_events.csv")
-        dict = how_many_medals(
-            pandas_dataframe, 'Kjetil Andr Aamodt')
-        print(dict)
+class TestHowManyMedals(unittest.TestCase):
 
-    except Exception as error:
-        print(error)
-        exit(1)
+    def setUp(self):
+        # Create a test dataframe
+        data = {'Year': [2000, 2000, 2004, 2004, 2008, 2008],
+                'Sport': ['Basketball', 'Basketball', 'Basketball',
+                          'Football', 'Football', 'Football'],
+                'Event': ['Men\'s Basketball', 'Women\'s Basketball',
+                          'Men\'s Basketball', 'Women\'s Football',
+                          'Men\'s Football', 'Women\'s Football'],
+                'Name': ['Kjetil Andr Aamodt', 'Kjetil Andr Aamodt',
+                         'Kjetil Andr Aamodt', 'Kjetil Andr Aamodt',
+                         'Kjetil Andr Aamodt', 'Kjetil Andr Aamodt'],
+                'Medal': ['Gold', 'Silver', 'Gold', 'Bronze',
+                          'Silver', 'Silver']}
+        self.test_dataframe = DataFrame(data)
+
+    def test_how_many_medals(self):
+        # Test the how_many_medals() function with a valid dataframe
+        # and participant name
+        result = how_many_medals(self.test_dataframe, 'Kjetil Andr Aamodt')
+        expected_result = {2000: {'G': 1, 'S': 1, 'B': 0},
+                           2004: {'G': 1, 'S': 0, 'B': 1},
+                           2008: {'G': 0, 'S': 2, 'B': 0}}
+        self.assertEqual(result, expected_result)
+
+        # Test the how_many_medals() function with an invalid dataframe
+        with self.assertRaises(TypeError):
+            how_many_medals(
+                'invalid_dataframe', 'Kjetil Andr Aamodt')  # type: ignore
+
+        # Test the how_many_medals() function with an invalid participant name
+        with self.assertRaises(TypeError):
+            how_many_medals(self.test_dataframe, 123)  # type: ignore
+
+
+if __name__ == '__main__':
+    unittest.main()

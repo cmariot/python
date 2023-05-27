@@ -1,5 +1,6 @@
-from FileLoader import FileLoader
+import unittest
 from pandas import DataFrame
+from FileLoader import FileLoader
 
 
 def proportion_by_sport(dataframe: DataFrame,
@@ -16,13 +17,13 @@ def proportion_by_sport(dataframe: DataFrame,
     """
 
     if not isinstance(dataframe, DataFrame):
-        print("Error, dataframe is not a pandas.DataFrame")
+        raise TypeError("Error, dataframe is not a pandas.DataFrame")
     elif not isinstance(olympic_year, int):
-        print("Invalid 'olympic_year' format, must be an int")
+        raise ValueError("Invalid 'olympic_year' format, must be an int")
     elif not isinstance(sport, str):
-        print("Error, invalid sport, must be a str")
+        raise ValueError("Error, invalid sport, must be a str")
     elif not isinstance(gender, str) or (gender != 'F' and gender != 'M'):
-        print("Error: Gender must be 'F' or 'M'")
+        raise ValueError("Error: Gender must be 'F' or 'M'")
 
     filtered_by_year = dataframe[dataframe['Year'] == olympic_year]
     unique_athletes = filtered_by_year.drop_duplicates(
@@ -37,15 +38,32 @@ def proportion_by_sport(dataframe: DataFrame,
     return (filtered_by_sport.shape[0] / filtered_by_gender.shape[0])
 
 
-if __name__ == "__main__":
-    file_loader = FileLoader()
-    try:
-        pandas_dataframe = file_loader.load(
-            "/Users/cmariot/42/python/module04/ressources/athlete_events.csv")
-        prop_by_sport = proportion_by_sport(
-            pandas_dataframe, 2004, 'Tennis', 'F')
-        print(prop_by_sport)
+class TestProportionBySport(unittest.TestCase):
+    def setUp(self):
+        loader = FileLoader()
+        self.df = loader.load('../ressources/athlete_events.csv')
 
-    except Exception as error:
-        print(error)
-        exit(1)
+    def test_invalid_dataframe(self):
+        with self.assertRaises(TypeError):
+            proportion_by_sport(None, 2016, 'Basketball', 'F')  # type: ignore
+
+    def test_invalid_year(self):
+        with self.assertRaises(ValueError):
+            proportion_by_sport(
+                self.df, '2016', 'Basketball', 'F')  # type: ignore
+
+    def test_invalid_sport(self):
+        with self.assertRaises(ValueError):
+            proportion_by_sport(self.df, 2016, 123, 'F')  # type: ignore
+
+    def test_invalid_gender(self):
+        with self.assertRaises(ValueError):
+            proportion_by_sport(self.df, 2016, 'Basketball', 'Female')
+
+    def test_valid_input(self):
+        self.assertEqual(proportion_by_sport(
+            self.df, 2004, 'Tennis', 'F'), 0.019302325581395347)
+
+
+if __name__ == '__main__':
+    unittest.main()

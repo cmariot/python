@@ -1,6 +1,7 @@
 from pandas import DataFrame, plotting
 from FileLoader import FileLoader
 from matplotlib import pyplot as plt
+import unittest
 
 
 class MyPlotLib:
@@ -55,6 +56,25 @@ class MyPlotLib:
         plt.show()
 
 
+class TestMyPlotLib(unittest.TestCase):
+
+    def setUp(self):
+        self.myplotlib = MyPlotLib()
+        self.df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})
+
+    def test_histogram(self):
+        self.assertIsNone(self.myplotlib.histogram(self.df, ['A', 'B']))
+
+    def test_density(self):
+        self.assertIsNone(self.myplotlib.density(self.df, ['A', 'B']))
+
+    def test_pair_plot(self):
+        self.assertIsNone(self.myplotlib.pair_plot(self.df, ['A', 'B']))
+
+    def test_box_plot(self):
+        self.assertIsNone(self.myplotlib.box_plot(self.df, ['A', 'B']))
+
+
 if __name__ == "__main__":
 
     file_loader = FileLoader()
@@ -67,6 +87,8 @@ if __name__ == "__main__":
         myplotlib.density(pandas_dataframe, ['Weight', 'Height'])
         myplotlib.pair_plot(pandas_dataframe, ['Weight', 'Height'])
         myplotlib.box_plot(pandas_dataframe, ['Weight', 'Height'])
+
+        unittest.main()
 
     except Exception as error:
         print(error)
