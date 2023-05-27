@@ -1,6 +1,7 @@
 from pandas import DataFrame
 from FileLoader import FileLoader
 from matplotlib import pyplot as plt
+import seaborn as sns
 import unittest
 
 
@@ -96,7 +97,9 @@ class Komparator:
             categorical_var, numerical_var)
 
         # create the density plot
-        plt.plot(values, density=True)
+        for i in range(len(categories)):
+            sns.kdeplot(
+                values[i], label=categories[i])
 
         # add the title
         plt.title(
@@ -222,5 +225,5 @@ if __name__ == "__main__":
 
         unittest.main()
 
-    except Exception as e:
-        print(e)
+    except Exception as exception:
+        print(exception)
