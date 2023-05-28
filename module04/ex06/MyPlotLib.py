@@ -19,6 +19,8 @@ class MyPlotLib:
                 raise Exception("Error, feature is not a str")
             if feature not in df.columns:
                 raise Exception("Error, feature not found in dataframe")
+            if df[feature].dtype not in ['int64', 'float64']:
+                raise Exception("Error, feature is not numerical")
 
     def histogram(self, data: DataFrame, features: list) -> None:
         """
@@ -60,7 +62,10 @@ class TestMyPlotLib(unittest.TestCase):
 
     def setUp(self):
         self.myplotlib = MyPlotLib()
-        self.df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]})
+        self.df = DataFrame({'A': [1, 2, 3],
+                             'B': [4, 5, 6],
+                             'C': [7, 8, 9],
+                             'D': ["a", "b", "c"]})
 
     def test_histogram(self):
         self.assertIsNone(self.myplotlib.histogram(self.df, ['A', 'B']))
@@ -73,6 +78,36 @@ class TestMyPlotLib(unittest.TestCase):
 
     def test_box_plot(self):
         self.assertIsNone(self.myplotlib.box_plot(self.df, ['A', 'B']))
+
+    def test_histogram_invalid_df(self):
+        with self.assertRaises(Exception) as context:
+            self.myplotlib.histogram(1, ['A', 'B'])
+        self.assertTrue("Error, dataframe is not a pandas.DataFrame"
+                        in str(context.exception))
+
+    def test_histogram_invalid_features(self):
+        with self.assertRaises(Exception) as context:
+            self.myplotlib.histogram(self.df, 1)
+        self.assertTrue("Error, features is not a list"
+                        in str(context.exception))
+
+    def test_histogram_invalid_feature(self):
+        with self.assertRaises(Exception) as context:
+            self.myplotlib.histogram(self.df, [1])
+        self.assertTrue("Error, feature is not a str"
+                        in str(context.exception))
+
+    def test_histogram_feature_not_found(self):
+        with self.assertRaises(Exception) as context:
+            self.myplotlib.histogram(self.df, ['E'])
+        self.assertTrue("Error, feature not found in dataframe"
+                        in str(context.exception))
+
+    def test_histogram_feature_not_numerical(self):
+        with self.assertRaises(Exception) as context:
+            self.myplotlib.histogram(self.df, ['D'])
+        self.assertTrue("Error, feature is not numerical"
+                        in str(context.exception))
 
 
 if __name__ == "__main__":

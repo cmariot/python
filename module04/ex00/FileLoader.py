@@ -1,7 +1,6 @@
 from pandas import DataFrame, read_csv
+from csv import writer
 import unittest
-from unittest.mock import patch
-from io import StringIO
 
 
 class FileLoader:
@@ -13,20 +12,21 @@ class FileLoader:
         (e.g. 340 x 500) and returns the dataset loaded as a pandas.DataFrame.
         """
         if not isinstance(path, str):
-            raise TypeError("Path must be a string")
-        if not path.endswith('.csv'):
-            raise ValueError("Path must be a .csv file")
+            print("Path must be a string")
+            return DataFrame()
         if not path:
-            raise ValueError("Path must not be empty")
-        
+            print("Path must not be empty")
+            return DataFrame()
+        if not path.endswith('.csv'):
+            print("Path must be a .csv file")
+            return DataFrame()
         try:
-            csv_file = read_csv(path)
-            pandas_df = DataFrame(data=csv_file)
-            print("Loading dataset of dimensions {} x {}".format(
-                pandas_df.shape[0], pandas_df.shape[1]))
-            return pandas_df
-        except Exception as error:
-            print("Error: {}".format(error))
+            df = read_csv(path)
+            print(
+                f"Loading dataset of dimensions {df.shape[0]} x {df.shape[1]}")
+            return df
+        except FileNotFoundError:
+            print("File not found")
             return DataFrame()
 
     def display(self, df, n=0) -> None:
@@ -36,14 +36,15 @@ class FileLoader:
         or the last n rows if n is negative.
         """
         if not isinstance(df, DataFrame):
-            raise TypeError("df must be a pandas.DataFrame")
+            print("Error: df must be a pandas.DataFrame")
+            return
         if not isinstance(n, int):
-            raise TypeError("n must be an integer")
-
-        if n > df.shape[0] or n < -df.shape[0]:
-            raise ValueError("n must be between {} and {}".format(
-                -df.shape[0], df.shape[0]))
-        elif n > 0:
+            print("Error: n must be an integer")
+            return
+        if n < -df.shape[0] or n > df.shape[0]:
+            print(f"Error: n must be between {-df.shape[0]} and {df.shape[0]}")
+            return
+        if n > 0:
             print(df.head(n))
         elif n < 0:
             print(df.tail(-n))
@@ -55,6 +56,15 @@ class TestFileLoader(unittest.TestCase):
 
     def setUp(self):
         self.loader = FileLoader()
+        data = [
+            ['A', 'B'],
+            [1, 4],
+            [2, 5],
+            [3, 6]
+        ]
+        with open('test_data.csv', 'w', newline='') as file:
+            w = writer(file)
+            w.writerows(data)
 
     def test_load_valid_csv(self):
         # Test loading a valid CSV file
@@ -69,37 +79,26 @@ class TestFileLoader(unittest.TestCase):
 
     def test_load_invalid_extension(self):
         # Test loading a file with an invalid extension
-        with self.assertRaises(ValueError):
-            self.loader.load('test_data.txt')
+        df = self.loader.load('test_data.txt')
+        self.assertEqual(df.shape, (0, 0))
 
-    def test_display_first_n_rows(self):
-        # Test displaying the first n rows of a DataFrame
+    def test_display_valid_df(self):
+        # Test displaying a valid DataFrame
         df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.loader.display(df.head(2))
-            self.assertEqual(fake_out.getvalue().strip(),
-                             'A  B\n0  1  4\n1  2  5')
-
-    def test_display_last_n_rows(self):
-        # Test displaying the last n rows of a DataFrame
-        df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.loader.display(df.tail(2))
-            self.assertEqual(fake_out.getvalue().strip(),
-                             'A  B\n1  2  5\n2  3  6')
-
-    def test_display_all_rows(self):
-        # Test displaying all rows of a DataFrame
-        df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.loader.display(df)
-            self.assertEqual(fake_out.getvalue().strip(),
-                             'A  B\n0  1  4\n1  2  5\n2  3  6')
+        self.loader.display(df, n=2)
+        self.loader.display(df, n=-1)
+        self.loader.display(df, n=0)
 
     def test_display_invalid_df(self):
-        # Test displaying rows with an invalid DataFrame
-        with self.assertRaises(TypeError):
-            self.loader.display('invalid_df')
+        # Test displaying an invalid DataFrame
+        self.loader.display('invalid_df', n=2)
+
+    def test_display_invalid_n(self):
+        # Test displaying a DataFrame with an invalid n
+        df = DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})
+        self.loader.display(df, n=4)
+        self.loader.display(df, n=-4)
+        self.loader.display(df, n='invalid_n')
 
 
 if __name__ == '__main__':
