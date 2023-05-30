@@ -49,7 +49,7 @@ class FileLoader:
         elif n < 0:
             print(df.tail(-n))
         else:
-            print(df)
+            print(df.to_string())
 
 
 class TestFileLoader(unittest.TestCase):
@@ -102,4 +102,14 @@ class TestFileLoader(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    unittest.main()
+    # path = "../ressources/athlete_events.csv"
+
+    try:
+        # loader = FileLoader()
+        # df = loader.load(path)
+        # loader.display(df, n=50)
+
+        unittest.main()
+
+    except Exception as e:
+        print(e)

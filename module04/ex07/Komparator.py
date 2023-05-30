@@ -1,5 +1,4 @@
-from pandas import DataFrame
-from FileLoader import FileLoader
+from pandas import DataFrame, read_csv
 from matplotlib import pyplot as plt
 import seaborn as sns
 import unittest
@@ -371,6 +370,55 @@ class TestKomparator(unittest.TestCase):
         # numerical variables
         with self.assertRaises(ValueError):
             self.komparator.compare_box_plots('Sex', ['invalid'])
+
+
+class FileLoader:
+
+    def load(self, path) -> DataFrame:
+        """
+        takes as an argument the file path of the dataset to load,
+        displays a message specifying the dimensions of the dataset
+        (e.g. 340 x 500) and returns the dataset loaded as a pandas.DataFrame.
+        """
+        if not isinstance(path, str):
+            print("Path must be a string")
+            return DataFrame()
+        if not path:
+            print("Path must not be empty")
+            return DataFrame()
+        if not path.endswith('.csv'):
+            print("Path must be a .csv file")
+            return DataFrame()
+        try:
+            df = read_csv(path)
+            print(
+                f"Loading dataset of dimensions {df.shape[0]} x {df.shape[1]}")
+            return df
+        except FileNotFoundError:
+            print("File not found")
+            return DataFrame()
+
+    def display(self, df, n=0) -> None:
+        """
+        takes a pandas.DataFrame and an integer as arguments,
+        displays the first n rows of the dataset if n is positive,
+        or the last n rows if n is negative.
+        """
+        if not isinstance(df, DataFrame):
+            print("Error: df must be a pandas.DataFrame")
+            return
+        if not isinstance(n, int):
+            print("Error: n must be an integer")
+            return
+        if n < -df.shape[0] or n > df.shape[0]:
+            print(f"Error: n must be between {-df.shape[0]} and {df.shape[0]}")
+            return
+        if n > 0:
+            print(df.head(n))
+        elif n < 0:
+            print(df.tail(-n))
+        else:
+            print(df.to_string())
 
 
 if __name__ == "__main__":
